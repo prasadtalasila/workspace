@@ -1,0 +1,23 @@
+{
+  "body": {
+    "aud": "ae6c0d278740414849c8d602958d25dee6accd15269125133b4d1a66c38062b3",
+    "auth_time": 1792604049,
+    "exp": 1792604388,
+    "given_name": "user1",
+    "groups_direct": [],
+    "iat": 1792604268,
+    "iss": "http://gitlab.test/gitlab",
+    "name": "user1",
+    "nickname": "user1",
+    "picture": "https://www.gravatar.com/avatar/f1850ce7cfc130a6a45cf08360329214ee505b9873e748b1ae7b80960c967786?s=80&d=identicon",
+    "preferred_username": "user1",
+    "profile": "http://gitlab.test/gitlab/user1",
+    "sub": "2",
+    "sub_legacy": "f34b3223dba0ba9079ea1a7f9892554c52c4fdf1d7267c58585867fba42077ab"
+  },
+  "header": {
+    "alg": "RS256",
+    "kid": "d2Ns-h7lqKx87jyCcIENSKFY-JeV8R18gs67m95xDag",
+    "typ": "JWT"
+  }
+}

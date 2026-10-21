@@ -1,0 +1,10 @@
+{
+  "body": {
+    "error": "invalid_token",
+    "error_description": "The access token is invalid",
+    "state": "<state>"
+  },
+  "content_type": "application/json; charset=utf-8",
+  "request": "POST /gitlab/oauth/introspect",
+  "status": 401
+}

@@ -18,7 +18,7 @@ S1 to S4 produce findings, not pull requests.
 | Order | Work | Feature | Repository | Depends on |
 | :--- | :--- | :--- | :--- | :--- |
 | 1 | S1 SeaweedFS and S2 rclone spike (done) | — | workspace | — |
-| 2 | S3 GitLab and S4 Keycloak spike | — | workspace | — |
+| 2 | S3 GitLab and S4 Keycloak spike (done) | — | workspace | — |
 | 3 | PR 1: `admin/backup` refactor, no behaviour change | F1 | workspace | — |
 | 4 | PR 2: asset names, writer, live reload, `127.0.0.1`, `cap_drop` | F1 | workspace | PR 1 |
 | 5 | PR 3: SeaweedFS in test compose (services added by S1; `ci/` variants and compose test remain) | F2 | workspace | S1 |
@@ -82,8 +82,8 @@ PR 8 and PR 9 can be built in parallel. PR 12 comes last.
 | :--- | :--- | :--- |
 | S1 SeaweedFS | Versioning, lifecycle on versioned buckets, STS with login-relay as issuer, prefix policy and denies; pin latest stable `>= 4.40` | Done: 4.48; role ARN, signing key, 1-hour sessions and a lifecycle runner differ from the design ([findings](tasks/102-s3-backup.md#s1-seaweedfs)) |
 | S2 rclone | `--s3-version-at`, SeaweedFS provider, session tokens, `--skip-links`, `--s3-no-check-bucket`; pin latest stable | Done: v1.75.2; the deletion brake needs `--delete-before` ([findings](tasks/102-s3-backup.md#s2-rclone)) |
-| S3 GitLab | PKCE for public applications, exact redirect URIs, `/oauth/token/info` and `/oauth/userinfo` fields, refresh rotation, no ID token on refresh, 2-hour access tokens | Open |
-| S4 Keycloak | `KC_HOSTNAME_BACKCHANNEL_DYNAMIC`, offline access with consent, 180-day offline maximum, introspection of `workspace-backup` tokens by login-relay | Open |
+| S3 GitLab | PKCE for public applications, exact redirect URIs, `/oauth/token/info` and `/oauth/userinfo` fields, refresh rotation, no ID token on refresh, 2-hour access tokens | Done: 19.5.1; refresh returns an ID token, `/oauth/introspect` exists, query strings pass redirect checks, a blocked user's refresh answers 500 ([findings](tasks/102-s3-backup.md#s3-gitlab)) |
+| S4 Keycloak | `KC_HOSTNAME_BACKCHANNEL_DYNAMIC`, offline access with consent, 180-day offline maximum, introspection of `workspace-backup` tokens by login-relay | Done: 26.8.1; introspection needs an audience mapper, the revocation endpoint stays public ([findings](tasks/102-s3-backup.md#s4-keycloak)) |
 
 ## Principles
 

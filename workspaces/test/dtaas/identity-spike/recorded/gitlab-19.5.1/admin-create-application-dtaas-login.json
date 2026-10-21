@@ -1,0 +1,16 @@
+{
+  "body": {
+    "application_id": "07f4c187962571b0f4a027af79c4a5f63af0644a6b82b3caad3e9aa083f88db8",
+    "application_name": "dtaas-login",
+    "callback_url": "http://dtaas.test/login-relay/callback",
+    "confidential": true,
+    "id": 11,
+    "scopes": [
+      "openid"
+    ],
+    "secret": "<secret>"
+  },
+  "content_type": "application/json",
+  "request": "POST /gitlab/api/v4/applications",
+  "status": 201
+}

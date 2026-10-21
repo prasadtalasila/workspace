@@ -1,0 +1,11 @@
+{
+  "body": {
+    "access_token": "<access_token>",
+    "created_at": 1792604264,
+    "expires_in": 7200,
+    "id_token": "<id_token>",
+    "refresh_token": "<refresh_token>",
+    "scope": "openid write_repository",
+    "token_type": "Bearer"
+  }
+}

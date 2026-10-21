@@ -1,0 +1,9 @@
+{
+  "body": {
+    "error": "invalid_request",
+    "error_description": "Client not allowed."
+  },
+  "content_type": "application/json",
+  "request": "POST /auth/realms/dtaas/protocol/openid-connect/token/introspect",
+  "status": 403
+}

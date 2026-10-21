@@ -26,7 +26,9 @@ log in with GitLab use GitLab directly**; only
 
 The `workspace-backup` clients are **public** with PKCE (S256): the
 workspace image carries no client secret, and PKCE proves that whoever
-redeems a code also started the login. SeaweedFS trusts only
+redeems a code also started the login. Keycloak enforces S256 for the
+client; GitLab accepts a public authorize request without a challenge,
+so workspace-admin always sends one (spike S3). SeaweedFS trusts only
 login-relay's signing keys in both profiles.
 
 ## Tokens
@@ -47,9 +49,10 @@ login-relay's signing keys in both profiles.
 
 Backups run every few minutes, also when the user is not logged in,
 so workspace-admin holds its own long-lived grant. STS needs a signed
-token that names the user. GitLab access tokens are opaque and a
-GitLab refresh returns no ID token. login-relay therefore checks the
-provider's token live and signs a 5-minute pass. It does the same for
+token that names the user. GitLab access tokens are opaque, and
+GitLab's ID tokens live 2 minutes (19.5.1 returns one on refresh too,
+undocumented). login-relay therefore checks the provider's token live
+and signs a 5-minute pass. It does the same for
 Keycloak, so both profiles share one path.
 
 ### How long grants live
@@ -61,7 +64,9 @@ Keycloak, so both profiles share one path.
   the workspace runs, since every round refreshes); "Offline Session
   Max" 180 days.
 
-Both may rotate the refresh token on every refresh. The admin saves
+Both return a new refresh token on every refresh. GitLab revokes the
+old one; Keycloak keeps it valid while the realm's "Revoke Refresh
+Token" is off, as it stays (spike S4). The admin saves
 the new one before using the access token, by temp file and rename,
 under a per-provider lock. An ended grant shows as `login_expired`.
 
@@ -93,7 +98,7 @@ every deployment.
 | Client credentials | Needs a secret per workspace; the token is not the user's |
 | Provider token exchange from the session cookie | Needs a confidential client, so a secret in every workspace |
 | login-relay keeps a refresh token at DTaaS login | It would hold every user's grant; every user would be asked for offline access |
-| GitLab ID token straight to STS | GitLab returns no ID token on refresh, and ID tokens expire in 2 minutes |
+| GitLab ID token straight to STS | ID tokens expire in 2 minutes and are documented as absent on refresh; SeaweedFS would trust each GitLab, and `WORKSPACE_USERS` could not stop a backup |
 | Password grant | Deprecated; integration tests only |
 
 ## Keycloak and GitLab compared
@@ -101,12 +106,12 @@ every deployment.
 | Aspect | Keycloak | GitLab |
 | :--- | :--- | :--- |
 | Authorize | `<realm>/protocol/openid-connect/auth` (public URL) | `/oauth/authorize` (public URL) |
-| Token, revoke | `/token`, `/revoke` on `http://keycloak:8080` | `/oauth/token`, `/oauth/revoke` on `GITLAB_INTERNAL_URL` |
-| Checking a token | Standard introspection | `/oauth/token/info` + `/oauth/userinfo` (no standard introspection) |
+| Token, revoke | `/token`, `/revoke` on `http://keycloak:8080` (discovery names the public `/revoke`) | `/oauth/token`, `/oauth/revoke` on `GITLAB_INTERNAL_URL` |
+| Checking a token | Standard introspection; login-relay's client must be in the token's `aud` | `/oauth/token/info` + `/oauth/userinfo` (`/oauth/introspect` sees only the caller's own tokens and names no user) |
 | Scopes for storage | `openid offline_access` | `openid write_repository` |
 | Access token | Signed JWT, 5 minutes | Opaque, 2 hours |
 | Username | `preferred_username` | `nickname` |
-| Redirect URIs | Exact list or trailing wildcard | Exact list only |
+| Redirect URIs | Exact list or trailing wildcard | Exact list only, but extra query parameters pass |
 | Consent | Only with "Consent required" | Always on first authorisation |
 | Logout | End-session endpoint | None for clients; revoke the token |
 | Central revocation | Disable user; revoke offline sessions | Block user; user revokes application |

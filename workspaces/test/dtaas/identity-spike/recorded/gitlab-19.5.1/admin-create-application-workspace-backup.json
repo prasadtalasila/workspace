@@ -1,0 +1,17 @@
+{
+  "body": {
+    "application_id": "ae6c0d278740414849c8d602958d25dee6accd15269125133b4d1a66c38062b3",
+    "application_name": "workspace-backup",
+    "callback_url": "http://dtaas.test/login-relay/oauth/gitlab/callback",
+    "confidential": false,
+    "id": 12,
+    "scopes": [
+      "openid",
+      "write_repository"
+    ],
+    "secret": "<secret>"
+  },
+  "content_type": "application/json",
+  "request": "POST /gitlab/api/v4/applications",
+  "status": 201
+}

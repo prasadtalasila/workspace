@@ -1,0 +1,12 @@
+{
+  "body": {
+    "accessTokenLifespan": 300,
+    "offlineSessionIdleTimeout": 2592000,
+    "offlineSessionMaxLifespan": 15552000,
+    "offlineSessionMaxLifespanEnabled": true,
+    "refreshTokenMaxReuse": 0,
+    "revokeRefreshToken": false,
+    "ssoSessionIdleTimeout": 1800,
+    "ssoSessionMaxLifespan": 36000
+  }
+}

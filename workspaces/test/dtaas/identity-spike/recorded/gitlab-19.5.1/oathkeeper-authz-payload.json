@@ -1,0 +1,16 @@
+{
+  "body": {
+    "subject": {
+      "extra": {
+        "client_id": "07f4c187962571b0f4a027af79c4a5f63af0644a6b82b3caad3e9aa083f88db8",
+        "groups": [
+          "dtaas"
+        ],
+        "scope": "openid",
+        "username": "user1"
+      },
+      "id": "2"
+    }
+  },
+  "note": "what login-relay's /authz/workspace/<user> receives"
+}

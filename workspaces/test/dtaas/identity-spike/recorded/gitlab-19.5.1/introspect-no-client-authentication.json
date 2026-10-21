@@ -1,0 +1,9 @@
+{
+  "body": {
+    "error": "invalid_request",
+    "error_description": "Request need to be authorized. Required parameter for authorizing request is missing or invalid."
+  },
+  "content_type": "application/json; charset=utf-8",
+  "request": "POST /gitlab/oauth/introspect",
+  "status": 400
+}

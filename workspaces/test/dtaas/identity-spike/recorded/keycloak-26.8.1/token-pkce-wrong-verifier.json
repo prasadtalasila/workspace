@@ -1,0 +1,9 @@
+{
+  "body": {
+    "error": "invalid_grant",
+    "error_description": "PKCE verification failed: Code mismatch"
+  },
+  "content_type": "application/json",
+  "request": "POST /auth/realms/dtaas/protocol/openid-connect/token",
+  "status": 400
+}

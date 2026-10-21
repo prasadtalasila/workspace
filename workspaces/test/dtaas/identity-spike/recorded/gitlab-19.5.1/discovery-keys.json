@@ -1,0 +1,25 @@
+{
+  "body": {
+    "keys": [
+      {
+        "alg": "RS256",
+        "e": "<e>",
+        "kid": "<kid>",
+        "kty": "RSA",
+        "n": "<n>",
+        "use": "sig"
+      },
+      {
+        "alg": "RS256",
+        "e": "<e>",
+        "kid": "<kid>",
+        "kty": "RSA",
+        "n": "<n>",
+        "use": "sig"
+      }
+    ]
+  },
+  "content_type": "application/json; charset=utf-8",
+  "request": "GET /gitlab/oauth/discovery/keys",
+  "status": 200
+}

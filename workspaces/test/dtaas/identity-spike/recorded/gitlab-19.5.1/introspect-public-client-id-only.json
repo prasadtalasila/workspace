@@ -1,0 +1,13 @@
+{
+  "body": {
+    "active": true,
+    "client_id": "ae6c0d278740414849c8d602958d25dee6accd15269125133b4d1a66c38062b3",
+    "exp": 1792611464,
+    "iat": 1792604264,
+    "scope": "openid write_repository",
+    "token_type": "Bearer"
+  },
+  "content_type": "application/json; charset=utf-8",
+  "request": "POST /gitlab/oauth/introspect",
+  "status": 200
+}

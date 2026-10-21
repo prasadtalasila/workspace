@@ -20,13 +20,13 @@ the threat model.
 | Fact about GitLab | Source | Consequence |
 | :--- | :--- | :--- |
 | Access tokens are opaque | GitLab OAuth docs | Neither Oathkeeper nor STS can verify them alone |
-| No RFC 7662 introspection endpoint found | GitLab docs; no `introspection_endpoint` in discovery | `login-relay` adapts `/oauth/token/info` and `/oauth/userinfo` |
-| Refresh responses carry no ID token | GitLab OAuth API docs; issue #44485 | A background job cannot obtain a fresh ID token |
+| `/oauth/introspect` answers only for the caller's own application and names no user | Spike S3 (GitLab 19.5.1) | `login-relay` adapts `/oauth/token/info` and `/oauth/userinfo` |
+| Refresh responses are documented without an ID token, yet 19.5.1 returns one | GitLab OAuth API docs; issue #44485; spike S3 | A background job cannot rely on a fresh ID token |
 | ID tokens hold few claims (`sub`; username via `userinfo`) and live 2 minutes | GitLab OIDC provider docs; issues #388176, #377654 | No `${jwt:nickname}` policy variable to rely on |
 | Refresh tokens have no fixed expiry | GitLab OAuth docs | The 180-day grant maximum cannot be enforced in GitLab |
 
-These are documented behaviours; spike task S3 confirms them on the
-deployed release.
+Spike task S3 checked them on GitLab 19.5.1
+([findings](../../tasks/102-s3-backup.md#s3-gitlab)).
 
 ## Effects and decisions
 
@@ -52,7 +52,8 @@ lands. The 30-second cache stays.
 ### E3. S3 credentials: login-relay as token bridge
 
 STS needs a verifiable JWT carrying the username. GitLab cannot supply
-one in the background (opaque access tokens, no ID token on refresh).
+one in the background (opaque access tokens; ID tokens that live 2
+minutes and are documented as absent on refresh).
 Options:
 
 | Option | Central revocation | Per-user secrets | Verdict |
@@ -183,7 +184,7 @@ for the same reason.
 | Bounce callback or per-user redirect URIs | Bounce |
 | Grant maximum | 180 days |
 | Version retention | Configurable, default 365 days |
-| Versions of SeaweedFS, rclone, Keycloak, GitLab | Latest stable, pinned by the spike: SeaweedFS 4.48 (S1), rclone v1.75.2 (S2); Keycloak and GitLab by S3 and S4 |
+| Versions of SeaweedFS, rclone, Keycloak, GitLab | Latest stable, pinned by the spike: SeaweedFS 4.48 (S1), rclone v1.75.2 (S2), GitLab 19.5.1 (S3), Keycloak 26.8.1 (S4) |
 
 The build order is in the [feature roadmap](../../FEATURE_ROADMAP.md):
 login-relay work is F3, F4 and F9.

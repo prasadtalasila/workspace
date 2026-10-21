@@ -97,10 +97,13 @@ sequenceDiagram
     O-->>B: allowed, Traefik forwards to the workspace
 ```
 
-Oathkeeper caches the answer for 30 seconds. GitLab has no standard
-introspection endpoint, so login-relay asks the two questions GitLab
+Oathkeeper caches the answer for 30 seconds. GitLab's
+`/oauth/introspect` answers only for the caller's own application and
+names no user (spike S3), so login-relay asks the two questions GitLab
 answers and replies in RFC 7662 form; with Keycloak it forwards to
 Keycloak's introspection endpoint and applies the same checks.
+Keycloak introspects only tokens whose `aud` names login-relay's
+client, so both its clients carry an Audience mapper for it (spike S4).
 
 | Situation | Result |
 | :--- | :--- |
@@ -129,9 +132,10 @@ sequenceDiagram
 "Also sign out of GitLab" links to
 `https://gitlab.example.org/users/sign_out`; GitLab has no logout for
 client applications. With Keycloak, step 2 redirects through
-Keycloak's end-session endpoint to the same page. A failed revocation
-is logged and the cookie still deleted. Backups are unaffected: they
-use workspace-admin's own grant.
+Keycloak's end-session endpoint to the same page. GitLab revokes a
+confidential application's token only with its `client_secret` (spike
+S3). A failed revocation is logged and the cookie still deleted.
+Backups are unaffected: they use workspace-admin's own grant.
 
 ## Requirements
 
@@ -154,7 +158,8 @@ use workspace-admin's own grant.
 - **LR-8** `/login-relay/oauth/<provider>/callback` (`gitlab` or
   `keycloak`) bounces to `/<user>/config/callback/<provider>` when
   `state` matches `^([a-z0-9._-]{1,255})\.([A-Za-z0-9_-]{43})$` (split on
-  the last dot) and the user is in `WORKSPACE_USERS`. It never redeems
+  the last dot) and the user is in `WORKSPACE_USERS`. It forwards only
+  `code`, `state`, `error` and `error_description`, and never redeems
   the code.
 - **LR-9** `/token/*`, `/authz/*`, `/.well-known/*` and `/health` are
   not routed by Traefik, which routes only `/login-relay` and `/logout`.
@@ -181,8 +186,11 @@ use workspace-admin's own grant.
 ```
 
 GitLab: `sub` is `resource_owner_id`, `exp` is now plus `expires_in`,
-`username` is `nickname`. Otherwise `{"active": false}`. Spike S3
-confirms which fields reach Oathkeeper's `.Extra`.
+`username` is `nickname`. Otherwise `{"active": false}`. Oathkeeper
+passes `username`, `client_id`, `scope` and the members of `ext` on in
+`.Extra`, and `sub` as `.Subject` (spike S3). With Keycloak, backup
+tokens also name login-relay's client in `aud`, so the client check
+uses `client_id`, never `aud`.
 
 **Exchange** (RFC 8693 shape):
 

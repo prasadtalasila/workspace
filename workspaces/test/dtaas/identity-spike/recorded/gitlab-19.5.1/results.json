@@ -1,0 +1,402 @@
+[
+ {
+  "check": "GitLab version",
+  "ok": true,
+  "detail": "19.5.1 449ed2875c2"
+ },
+ {
+  "check": "non-confidential application registered",
+  "ok": true,
+  "detail": "confidential=False, secret returned=True"
+ },
+ {
+  "check": "discovery issuer is GITLAB_URL",
+  "ok": true,
+  "detail": "issuer http://gitlab.test/gitlab"
+ },
+ {
+  "check": "discovery advertises introspection_endpoint (design: none)",
+  "ok": true,
+  "detail": "http://gitlab.test/gitlab/oauth/introspect"
+ },
+ {
+  "check": "PKCE methods advertised",
+  "ok": true,
+  "detail": "['plain', 'S256']"
+ },
+ {
+  "check": "write_repository is an advertised scope",
+  "ok": true,
+  "detail": "24 scopes"
+ },
+ {
+  "check": "device authorization endpoint (informational)",
+  "ok": true,
+  "detail": "None"
+ },
+ {
+  "check": "keys at GITLAB_INTERNAL_URL/oauth/discovery/keys",
+  "ok": true,
+  "detail": "algs ['RS256', 'RS256']"
+ },
+ {
+  "check": "consent page on first authorization (dtaas-login)",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "check": "confidential application refuses redeem without secret",
+  "ok": true,
+  "detail": "HTTP 401 invalid_client"
+ },
+ {
+  "check": "consent again while no token was issued",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "check": "no consent once a token exists: 200 Redirecting page",
+  "ok": true,
+  "detail": "HTTP 200, Location header None"
+ },
+ {
+  "check": "dtaas-login token: openid only",
+  "ok": true,
+  "detail": "scope openid"
+ },
+ {
+  "check": "access token lives 2 hours",
+  "ok": true,
+  "detail": "expires_in 7200"
+ },
+ {
+  "check": "ID token verifies: keys, iss GITLAB_URL, aud (dtaas-login)",
+  "ok": true,
+  "detail": "alg RS256"
+ },
+ {
+  "check": "ID token echoes nonce (dtaas-login)",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "check": "ID token lifetime (informational, dtaas-login)",
+  "ok": true,
+  "detail": "exp-iat 120s, claims ['aud', 'auth_time', 'exp', 'given_name', 'groups_direct', 'iat', 'iss', 'name', 'nickname', 'nonce', 'picture', 'preferred_username', 'profile', 'sub', 'sub_legacy']"
+ },
+ {
+  "check": "consent page on first authorization (workspace-backup)",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "check": "public redeem without code_verifier refused",
+  "ok": true,
+  "detail": "HTTP 400 invalid_request"
+ },
+ {
+  "check": "public redeem with wrong code_verifier refused",
+  "ok": true,
+  "detail": "HTTP 400 invalid_grant"
+ },
+ {
+  "check": "public redeem with verifier and no secret",
+  "ok": true,
+  "detail": "HTTP 200"
+ },
+ {
+  "check": "code is single use",
+  "ok": true,
+  "detail": "HTTP 400 invalid_grant"
+ },
+ {
+  "check": "public application without code_challenge: no PKCE",
+  "ok": true,
+  "detail": "informational: authorize gives a code, redeem without verifier HTTP 200"
+ },
+ {
+  "check": "code_challenge_method=plain (informational)",
+  "ok": true,
+  "detail": "redeem HTTP 200"
+ },
+ {
+  "check": "redirect_uri refused: dtaas.test/login-relay/oauth/gitlab/callback/x",
+  "ok": true,
+  "detail": "HTTP 200 error page"
+ },
+ {
+  "check": "extra query on the registered URI accepted: dtaas.test/login-relay/oauth/gitlab/callback?next=/x",
+  "ok": true,
+  "detail": "informational: code sent to http://dtaas.test/login-relay/oauth/gitlab/callback?next=%2Fx"
+ },
+ {
+  "check": "redirect_uri refused: dtaas.test/login-relay/oauth/gitlab/callback/",
+  "ok": true,
+  "detail": "HTTP 200 error page"
+ },
+ {
+  "check": "redirect_uri refused: evil.test/login-relay/oauth/gitlab/callback",
+  "ok": true,
+  "detail": "HTTP 200 error page"
+ },
+ {
+  "check": "redirect_uri refused: /dtaas.test/login-relay/oauth/gitlab/callback",
+  "ok": true,
+  "detail": "HTTP 200 error page"
+ },
+ {
+  "check": "redirect_uri refused: DTAAS.TEST/LOGIN-RELAY/OAUTH/GITLAB/CALLBACK",
+  "ok": true,
+  "detail": "HTTP 200 error page"
+ },
+ {
+  "check": "redeem with other redirect_uri than authorize refused",
+  "ok": true,
+  "detail": "HTTP 400 invalid_grant"
+ },
+ {
+  "check": "unregistered scope refused",
+  "ok": true,
+  "detail": "HTTP 200 error page"
+ },
+ {
+  "check": "workspace-backup token: openid write_repository",
+  "ok": true,
+  "detail": "scope openid write_repository, id_token True"
+ },
+ {
+  "check": "token/info fields (dtaas-login)",
+  "ok": true,
+  "detail": "['application', 'created_at', 'expires_in', 'expires_in_seconds', 'resource_owner_id', 'scope', 'scopes']"
+ },
+ {
+  "check": "token/info application uid matches (dtaas-login)",
+  "ok": true,
+  "detail": "application {'uid': '07f4c187962571b0f4a027af79c4a5f63af0644a6b82b3caad3e9aa083f88db8'}"
+ },
+ {
+  "check": "token/info expires_in near 7200 (dtaas-login)",
+  "ok": true,
+  "detail": "expires_in 7197, scope ['openid']"
+ },
+ {
+  "check": "userinfo nickname is the username (dtaas-login)",
+  "ok": true,
+  "detail": "fields ['given_name', 'groups', 'name', 'nickname', 'picture', 'preferred_username', 'profile', 'sub', 'sub_legacy']"
+ },
+ {
+  "check": "userinfo sub is token/info resource_owner_id (dtaas-login)",
+  "ok": true,
+  "detail": "sub 2"
+ },
+ {
+  "check": "token/info fields (workspace-backup)",
+  "ok": true,
+  "detail": "['application', 'created_at', 'expires_in', 'expires_in_seconds', 'resource_owner_id', 'scope', 'scopes']"
+ },
+ {
+  "check": "token/info application uid matches (workspace-backup)",
+  "ok": true,
+  "detail": "application {'uid': 'ae6c0d278740414849c8d602958d25dee6accd15269125133b4d1a66c38062b3'}"
+ },
+ {
+  "check": "token/info expires_in near 7200 (workspace-backup)",
+  "ok": true,
+  "detail": "expires_in 7200, scope ['openid', 'write_repository']"
+ },
+ {
+  "check": "userinfo nickname is the username (workspace-backup)",
+  "ok": true,
+  "detail": "fields ['given_name', 'groups', 'name', 'nickname', 'picture', 'preferred_username', 'profile', 'sub', 'sub_legacy']"
+ },
+ {
+  "check": "userinfo sub is token/info resource_owner_id (workspace-backup)",
+  "ok": true,
+  "detail": "sub 2"
+ },
+ {
+  "check": "token/info also takes ?access_token= (informational)",
+  "ok": true,
+  "detail": "HTTP 200"
+ },
+ {
+  "check": "token/info for an unknown token is 401",
+  "ok": true,
+  "detail": "HTTP 401 {\"error\":\"invalid_token\",\"error_description\":\"The access token is invalid\",\"stat"
+ },
+ {
+  "check": "userinfo for an unknown token is 401",
+  "ok": true,
+  "detail": "HTTP 401"
+ },
+ {
+  "check": "introspect, own token, client credentials (informational)",
+  "ok": true,
+  "detail": "HTTP 200 active True fields ['active', 'client_id', 'exp', 'iat', 'scope', 'token_type']"
+ },
+ {
+  "check": "introspect, workspace-backup token, dtaas-login credentials (informational)",
+  "ok": true,
+  "detail": "HTTP 200 active False fields ['active']"
+ },
+ {
+  "check": "introspect, token as its own bearer (informational)",
+  "ok": true,
+  "detail": "HTTP 401 active None fields ['error', 'error_description', 'state']"
+ },
+ {
+  "check": "introspect, no client authentication (informational)",
+  "ok": true,
+  "detail": "HTTP 400 active None fields ['error', 'error_description']"
+ },
+ {
+  "check": "introspect, public client_id only (informational)",
+  "ok": true,
+  "detail": "HTTP 200 active True fields ['active', 'client_id', 'exp', 'iat', 'scope', 'token_type']"
+ },
+ {
+  "check": "git clone with workspace-backup token over GITLAB_INTERNAL_URL",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "check": "git push with openid write_repository",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "check": "openid-only login token cannot read or push",
+  "ok": true,
+  "detail": "push: ab/user1/thesis.git/': The requested URL returned error: 403"
+ },
+ {
+  "check": "user1's token cannot reach user2's private project",
+  "ok": true,
+  "detail": " view it.\nfatal: repository 'http://gitlab/gitlab/user2/private2.git/' not found"
+ },
+ {
+  "check": "Oathkeeper allows user1's login token on /user1/",
+  "ok": true,
+  "detail": "HTTP 200"
+ },
+ {
+  "check": "header mutator: X-User-Name and X-User-Subject",
+  "ok": true,
+  "detail": "X-User-Name user1, X-User-Groups [\"dtaas\"]"
+ },
+ {
+  "check": "fields in Oathkeeper .Extra",
+  "ok": true,
+  "detail": "['client_id', 'groups', 'scope', 'username']"
+ },
+ {
+  "check": "user1's token on /user2/ not allowed",
+  "ok": true,
+  "detail": "HTTP 302 http://localhost/login-relay?return_to=http%3A%2F%2Fdtaas.te"
+ },
+ {
+  "check": "workspace-backup token is not a session",
+  "ok": true,
+  "detail": "HTTP 302"
+ },
+ {
+  "check": "public refresh without secret",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "check": "refresh rotates the refresh token",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "check": "ID token on refresh (informational)",
+  "ok": true,
+  "detail": "fields ['access_token', 'created_at', 'expires_in', 'id_token', 'refresh_token', 'scope', 'token_type']"
+ },
+ {
+  "check": "refresh ID token: fresh iat, 2 minutes, no nonce",
+  "ok": true,
+  "detail": "informational: iat-auth_time 219s, exp-iat 120s, nonce False, aud is the app True"
+ },
+ {
+  "check": "refreshed access token lives 2 hours",
+  "ok": true,
+  "detail": "expires_in 7200, scope openid write_repository"
+ },
+ {
+  "check": "old access token after refresh (informational)",
+  "ok": true,
+  "detail": "token/info HTTP 401"
+ },
+ {
+  "check": "used refresh token refused",
+  "ok": true,
+  "detail": "HTTP 400 invalid_grant"
+ },
+ {
+  "check": "newest grant after a reuse attempt (informational)",
+  "ok": true,
+  "detail": "token/info HTTP 200"
+ },
+ {
+  "check": "refresh token bound to its application",
+  "ok": true,
+  "detail": "HTTP 401 invalid_client"
+ },
+ {
+  "check": "public revoke with token and client_id",
+  "ok": true,
+  "detail": "HTTP 200"
+ },
+ {
+  "check": "revoked refresh token refused",
+  "ok": true,
+  "detail": "HTTP 400 invalid_grant"
+ },
+ {
+  "check": "access token of a revoked refresh token (informational)",
+  "ok": true,
+  "detail": "token/info HTTP 401"
+ },
+ {
+  "check": "revoking the access token ends it",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "check": "refresh after access-token revoke (informational)",
+  "ok": true,
+  "detail": "HTTP 400 invalid_grant"
+ },
+ {
+  "check": "confidential revoke with client_id only (informational)",
+  "ok": true,
+  "detail": "HTTP 403, token/info now 200"
+ },
+ {
+  "check": "deny on consent returns access_denied",
+  "ok": true,
+  "detail": "HTTP 302 access_denied"
+ },
+ {
+  "check": "blocked user's refresh refused",
+  "ok": true,
+  "detail": "HTTP 500"
+ },
+ {
+  "check": "blocked user's second refresh (informational)",
+  "ok": true,
+  "detail": "HTTP 400 invalid_grant"
+ },
+ {
+  "check": "blocked user's access token rejected by token/info",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "check": "grant after unblocking (informational)",
+  "ok": true,
+  "detail": "refresh HTTP 400 invalid_grant"
+ }
+]

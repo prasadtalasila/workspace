@@ -36,6 +36,8 @@ Keycloak; GitLab; nginx; Docker Compose.
 - `rclone` and SeaweedFS (`>= 4.40`) pinned to the latest stable
   release at spike time, with checksums: rclone v1.75.2, SeaweedFS
   4.48 ([spike findings](../tasks/102-s3-backup.md#spike-findings)).
+  Identity providers checked at spike time: GitLab 19.5.1 (S3),
+  Keycloak 26.8.1 and 26.7.4 (S4).
 - Asset names `^[a-z0-9]{1,63}$`, defined once in `admin/assets`.
 - Secret and config files: mode `0600`, temp file, `fsync`, rename.
 - Admin TCP listener `127.0.0.1`; control socket in

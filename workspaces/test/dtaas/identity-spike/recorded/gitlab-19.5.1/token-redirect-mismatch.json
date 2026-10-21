@@ -1,0 +1,9 @@
+{
+  "body": {
+    "error": "invalid_grant",
+    "error_description": "The provided authorization grant is invalid, expired, revoked, does not match the redirection URI used in the authorization request, or was issued to another client."
+  },
+  "content_type": "application/json; charset=utf-8",
+  "request": "POST /gitlab/oauth/token",
+  "status": 400
+}

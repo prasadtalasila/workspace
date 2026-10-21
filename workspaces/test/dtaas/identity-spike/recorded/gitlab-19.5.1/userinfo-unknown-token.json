@@ -1,0 +1,6 @@
+{
+  "body": "",
+  "content_type": "text/html",
+  "request": "GET /gitlab/oauth/userinfo",
+  "status": 401
+}

@@ -1,0 +1,9 @@
+{
+  "body": {
+    "error": "invalid_request",
+    "error_description": "Missing required parameter: code_verifier."
+  },
+  "content_type": "application/json; charset=utf-8",
+  "request": "POST /gitlab/oauth/token",
+  "status": 400
+}

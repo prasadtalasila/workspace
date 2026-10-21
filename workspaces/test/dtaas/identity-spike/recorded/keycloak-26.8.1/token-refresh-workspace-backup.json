@@ -1,0 +1,16 @@
+{
+  "body": {
+    "access_token": "<access_token>",
+    "expires_in": 300,
+    "id_token": "<id_token>",
+    "not-before-policy": 0,
+    "refresh_expires_in": 2592000,
+    "refresh_token": "<refresh_token>",
+    "scope": "openid profile email offline_access",
+    "session_state": "<session_state>",
+    "token_type": "Bearer"
+  },
+  "content_type": "application/json",
+  "request": "POST /auth/realms/dtaas/protocol/openid-connect/token",
+  "status": 200
+}

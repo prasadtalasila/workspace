@@ -1,0 +1,22 @@
+{
+  "body": {
+    "application": {
+      "uid": "ae6c0d278740414849c8d602958d25dee6accd15269125133b4d1a66c38062b3"
+    },
+    "created_at": 1792604264,
+    "expires_in": 7200,
+    "expires_in_seconds": 7200,
+    "resource_owner_id": 2,
+    "scope": [
+      "openid",
+      "write_repository"
+    ],
+    "scopes": [
+      "openid",
+      "write_repository"
+    ]
+  },
+  "content_type": "application/json; charset=utf-8",
+  "request": "GET /gitlab/oauth/token/info",
+  "status": 200
+}

@@ -20,12 +20,12 @@ test-first detail for a feature is written just before it starts.
 - [x] **S2 rclone.** Pin the latest stable release with
   `--s3-version-at`, the `SeaweedFS` provider, session tokens,
   `--skip-links`, `--s3-no-check-bucket`; record the SHA-256.
-- [ ] **S3 GitLab.** On the latest stable GitLab: non-confidential
+- [x] **S3 GitLab.** On the latest stable GitLab: non-confidential
   application with PKCE; exact redirect URIs; `openid` and
   `openid write_repository`; fields of `/oauth/token/info` and
   `/oauth/userinfo`; 2-hour access tokens; refresh rotation; no ID
   token on refresh.
-- [ ] **S4 Keycloak.** `KC_HOSTNAME_BACKCHANNEL_DYNAMIC` gives
+- [x] **S4 Keycloak.** `KC_HOSTNAME_BACKCHANNEL_DYNAMIC` gives
   internal backchannel URLs and the public `iss`; public
   `workspace-backup` client with PKCE, `offline_access` and consent;
   180-day offline maximum; login-relay's confidential client can
@@ -117,7 +117,9 @@ test-first detail for a feature is written just before it starts.
 - [ ] **T402 Bounce.** `/login-relay/oauth/<provider>/callback`. Tests:
   `test_bounce_redirects_listed_user`, `test_bounce_refuses_unlisted`,
   `test_bounce_rejects_malformed_state`, `test_bounce_never_redeems`,
-  `test_bounce_username_with_dot`, `test_bounce_unknown_provider`.
+  `test_bounce_username_with_dot`, `test_bounce_unknown_provider`,
+  `test_bounce_forwards_only_code_state_error` (GitLab accepts extra
+  query parameters on the registered address, S3).
 - [ ] **T403 Exposure.** *Check*: `/token/*`, `/authz/*`,
   `/.well-known/*` unreachable through Traefik in the test compose.
 
@@ -161,7 +163,9 @@ test-first detail for a feature is written just before it starts.
 ## F7 GitLab connection for git (PR 9)
 
 - [ ] **T701 Git uses the connection** when `GIT_AUTH = "gitlab"`;
-  host must be `GITLAB_URL`'s; `git ls-remote` after connect. Tests:
+  host must be `GITLAB_URL`'s or `GITLAB_INTERNAL_URL`'s, and only the
+  latter may be `http` (integrated GitLab, S3); `git ls-remote` after
+  connect. Tests:
   `test_gitlab_auth_header`, `test_repo_unreachable_keeps_connection`.
 - [ ] **T702 Credentials via environment** (`GIT_CONFIG_COUNT`) for
   every git credential. Tests: `test_no_credential_in_git_argv`,
@@ -201,8 +205,8 @@ the workspace image includes F5.
 - [ ] **T1001 Provisioning job.** Bucket, versioning, lifecycle
   (`NONCURRENT_VERSION_DAYS`, default 365), `iam.json` trusting
   login-relay; Keycloak `workspace-backup` client (bounce
-  redirect URI). *Check*: second run changes
-  nothing; adding a user needs no change.
+  redirect URI, audience mapper for login-relay's client, S4).
+  *Check*: second run changes nothing; adding a user needs no change.
 - [ ] **T1002 Integration.** SeaweedFS on `dtaas-users`; storage
   variables on workspaces; `workspace-backup` GitLab application
   registration documented.
@@ -214,12 +218,22 @@ the workspace image includes F5.
 
 ## Spike findings
 
-S3 and S4 are still open. S1 and S2 ran on 2026-10-18 against the
+S1 and S2 ran on 2026-10-18 against the
 SeaweedFS service of `workspaces/test/dtaas/compose.traefik.secure.yml`,
 with `seaweedfs/spike/` standing in for login-relay (an ES256 key with
 `kid`, JWKS at `http://login-relay:8080/.well-known/jwks.json`). 64 of
 64 checks passed, plus 4 after a restart, the lifecycle probe through
 the `seaweedfs-lifecycle` service, and 7 rclone checks for S2.
+
+S3 and S4 ran on 2026-10-21 with `identity-spike/` (usage in its
+[README](../../workspaces/test/dtaas/identity-spike/README.md)), which
+registers the applications and clients through the providers' admin
+APIs and drives the browser steps over HTTP. S3: 80 of 80 checks
+against a throwaway GitLab under `/gitlab`, as integrated GitLab runs,
+and the test compose's Oathkeeper. S4: 67 of 67 against the test
+compose's Keycloak behind its Traefik, on 26.7.4 and again on 26.8.1.
+The providers' answers, tokens redacted, are in
+`identity-spike/recorded/` for login-relay's contract tests (T303).
 
 ### S1 SeaweedFS
 
@@ -322,3 +336,167 @@ the zip.
   admin's `s3_empty_source` refusal is required.
 - A user's STS keys cannot `--s3-version-at` (`ListObjectVersions` is
   denied); restore stays with the operator, as designed.
+
+### S3 GitLab
+
+**Pin:** `gitlab/gitlab-ce:19.5.1-ce.0`
+(`sha256:bb79dc86267c557fd11e7feb0cd9dd506dd02e991ecdd6cae11ca7d7e5d36fc3`),
+latest stable on 2026-10-21. Oathkeeper `oryd/oathkeeper:v26.2.0`
+(`sha256:467329abde34feefca217b7af76fff59e77fe1795a19376e9d479f33c7c198fc`),
+as in the test compose.
+
+Confirmed as designed:
+
+- A non-confidential application redeems with PKCE S256 and no
+  secret. Without `code_verifier` it is refused (`invalid_request`),
+  with a wrong one too (`invalid_grant`); a code is single use. The
+  confidential `dtaas-login` is refused without its secret
+  (`401 invalid_client`).
+- Redirect URIs are exact: another path, a trailing slash, another
+  host, `https` or upper case get GitLab's error page (HTTP 200, "An
+  error has occurred"), never a redirect. Redeeming with another
+  `redirect_uri` than the authorize request is `invalid_grant`.
+- Scopes: the `dtaas-login` token (`openid`) can neither read nor push
+  (git 403). The `workspace-backup` token (`openid write_repository`)
+  clones and pushes over `GITLAB_INTERNAL_URL` with HTTP Basic
+  `oauth2:<token>`, as `admin.git.auth` sends it, and cannot reach
+  another user's private project. A scope the application lacks gets
+  the error page.
+- `/oauth/token/info`: `resource_owner_id`, `scope` and `scopes`
+  (lists), `expires_in`, `expires_in_seconds`, `application.uid`,
+  `created_at`. `/oauth/userinfo`: `sub` (the `resource_owner_id` as a
+  string), `nickname`, `preferred_username`, `name`, `given_name`,
+  `groups`, `picture`, `profile`, `sub_legacy`. Both answer 401
+  `invalid_token` for an unknown or revoked token.
+- Access tokens last 7200 seconds, from a code and from a refresh.
+- Refresh rotates: each refresh returns a new refresh token and revokes
+  the previous access token; a used refresh token is `invalid_grant`,
+  and the newest one still works after such a reuse. A refresh token
+  works only with its own application (`401 invalid_client`).
+- ID tokens: RS256, keys at `GITLAB_INTERNAL_URL/oauth/discovery/keys`,
+  `iss` the public `GITLAB_URL` also when asked at the internal
+  address, `aud` the application uid, `nonce` echoed, 120 seconds.
+  Discovery at the internal address names the public issuer.
+- Consent is asked on the first authorization of each application,
+  and again until a token has been issued; "Deny" returns
+  `error=access_denied` with `state`.
+- Revocation: the public application revokes with `token` and
+  `client_id`. Revoking the refresh token also ends its access token,
+  and the other way round.
+- Blocking a user ends the grant: token/info rejects the access token,
+  and the refresh token never works again, also after unblocking.
+- Oathkeeper's `.Extra` holds `username`, `client_id` and `scope` from
+  the introspection answer, plus the members of `ext` (`groups`);
+  `sub` becomes `.Subject`; `active`, `exp` and `token_type` are not
+  passed on. The header mutator sets `X-User-Name`, `X-User-Subject`
+  and `X-User-Groups`. user1's token on `/user2/` and a
+  `workspace-backup` token on `/user1/` both end in the redirect to
+  login-relay.
+
+Differs from the design (docs updated):
+
+1. **ID token on refresh.** GitLab 19.5.1 returns an `id_token` on a
+   refresh too: fresh `iat`, the original `auth_time`, no `nonce`, 120
+   seconds. The storage pass stays: SeaweedFS would otherwise trust
+   each GitLab, the token lives 2 minutes, and `WORKSPACE_USERS` could
+   not stop a backup.
+2. **Introspection exists.** Discovery advertises `/oauth/introspect`
+   (RFC 7662). A confidential application sees only its own tokens
+   (another application's token is `active: false`); a public one
+   needs only `client_id`. The answer has `active`, `client_id`,
+   `scope`, `exp`, `iat`, `token_type`, but no user, so login-relay's
+   adapter keeps `/oauth/token/info` and `/oauth/userinfo`.
+3. **Blocked user: HTTP 500 once.** The refresh for a blocked user
+   fails inside GitLab (`NoMethodError` building the refresh's ID
+   token) and answers 500 with an HTML page; the refresh token is gone
+   and the next attempt is `invalid_grant`. The admin reports the 5xx
+   as `login_unreachable` and the next round's `invalid_grant` as
+   `login_expired` (T504).
+4. **Query strings pass.** `.../oauth/gitlab/callback?next=/x` is
+   accepted and the code is sent there with `next` kept. login-relay's
+   bounce forwards only `code`, `state`, `error` and
+   `error_description` (T402).
+5. **PKCE is optional** for non-confidential applications: an
+   authorize request without `code_challenge` yields a code redeemable
+   without verifier, and `plain` is accepted. A code issued with an
+   S256 challenge always needs its verifier, so the protection holds
+   as long as workspace-admin always sends S256.
+6. **Revoking for a confidential application needs its secret.** With
+   `client_id` only, `/oauth/revoke` answers 403 and the token stays
+   valid; login-relay's logout sends `client_secret`.
+7. **No 302 once consented.** When consent is skipped, GitLab answers
+   the authorize request with an HTML "Redirecting" page (HTTP 200)
+   instead of a redirect. Browsers follow it; the fake GitLab may
+   answer 302.
+8. **Integrated GitLab is `http`.** `admin.git.auth` allows only the
+   `https` transport, but remotes on `GITLAB_INTERNAL_URL`
+   (`http://gitlab/gitlab/...`) are `http`; T701 allows `http` for
+   that host only.
+9. **No device flow** is advertised (`device_authorization_endpoint`
+   absent); the follow-up stays a follow-up.
+
+### S4 Keycloak
+
+**Pin:** `quay.io/keycloak/keycloak:26.8.1`
+(`sha256:79c623a22abacf3fe6c00a5fb30f5b7843d717b234033b80995891c06116d244`),
+latest stable on 2026-10-21. The test compose's 26.7.4
+(`sha256:82a77884f3af238beab1e7afd63b5f530e1b5c0590bd7aa60b40a40463e29b2c`)
+gives the same 67 results.
+
+Confirmed as designed:
+
+- With `KC_HOSTNAME=http://dtaas.test/auth` and
+  `KC_HOSTNAME_BACKCHANNEL_DYNAMIC=true`, discovery read at
+  `http://keycloak:8080/auth` names the public issuer and
+  `authorization_endpoint`, and internal `token_endpoint`,
+  `introspection_endpoint`, `jwks_uri` and `userinfo_endpoint`.
+  Discovery through Traefik is public throughout. A code from the
+  public authorize page redeems at the internal token endpoint; access
+  and ID tokens carry the public `iss`, and the ID token verifies
+  against the internal JWKS.
+- The public `workspace-backup` client with `pkce.code.challenge.method`
+  S256 refuses an authorize request without a challenge or with
+  `plain` (`invalid_request`, sent to the redirect URI), and a redeem
+  without or with a wrong verifier (`invalid_grant`). It redeems and
+  refreshes without a secret; a code is single use.
+- "Consent required" shows the consent page once, then remembers it;
+  "No" returns `error=access_denied`. The DTaaS SSO session means no
+  password at connect.
+- `openid offline_access` gives an `Offline` refresh token
+  (`refresh_expires_in` 2592000: the 30-day idle). The realm keeps
+  "Offline Session Max Limited" with 180 days; a 20-second maximum
+  ended a grant in use ("Token is not active"), so the limit holds
+  however often the grant is refreshed.
+- Redirect URIs are exact, query strings included (400 page); redeeming
+  with another `redirect_uri` is `invalid_grant`.
+- Access tokens last 300 seconds and carry `preferred_username` and
+  `azp` for the owner check. Refresh returns an ID token as well.
+- Ends of a grant: revoking the offline token at `/revoke` with
+  `client_id` only (200) removes the offline session; a disabled user
+  is `invalid_grant` ("User disabled"); an admin revoking the consent
+  ends the offline session.
+- A public client may not introspect (403); a wrong secret is 401; an
+  unknown token is `{"active": false}`.
+
+Differs from the design (docs updated):
+
+1. **Introspection needs the audience.** Keycloak answers `active:
+   false` to login-relay's client unless the token's `aud` holds
+   `dtaas-workspace`, also for login-relay's own tokens (hence the
+   Audience mapper in `KEYCLOAK_SETUP.md`). `workspace-backup` needs
+   an Audience mapper adding `dtaas-workspace` to its access tokens;
+   then the answer is active with `client_id` and `azp`
+   `workspace-backup` and `username` `user1`. Backup tokens then name
+   login-relay's client in `aud`, so login-relay must keep telling
+   sessions from backup tokens by `client_id` (LR-5), never by `aud`.
+2. **Revocation stays public.** With backchannel URLs dynamic,
+   `revocation_endpoint` (and `end_session_endpoint`) in internal
+   discovery still name the public host. workspace-admin builds the
+   revoke URL from `OIDC_INTERNAL_URL` instead of taking it from
+   discovery.
+3. **Rotation is a realm choice.** Keycloak returns a new refresh token
+   on every refresh but, by default ("Revoke Refresh Token" off), the
+   old one keeps working. With it on, reusing an old token is
+   `invalid_grant` and also ends the newer one ("Session doesn't have
+   required client"). The realm keeps it off, so a rotation lost in a
+   crash does not end the grant.

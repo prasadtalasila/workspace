@@ -1,0 +1,6 @@
+{
+  "body": "<!DOCTYPE html>\n<html>\n<head>\n  <meta content=\"width=device-width, initial-scale=1\" name=\"viewport\">\n  <title>Something went wrong (500)</title>\n  <style>\n    body {\n      color: #333238;\n      text-align: center;\n      font-family: \"Nunito Sans\", -apple-system, \".SFNSText-Regular\", \"San Francisco\", BlinkMacSystemFont, \"Segoe UI\", \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n    }\n\n    h1 {\n   ",
+  "content_type": "text/html; charset=utf-8",
+  "request": "POST /gitlab/oauth/token",
+  "status": 500
+}

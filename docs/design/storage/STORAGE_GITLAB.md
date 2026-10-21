@@ -74,10 +74,12 @@ Browser addresses:
 5. `https://dtaas.example.org/user1/config#connected`
 
 **Why the bounce (steps 8 and 9).** GitLab only returns to registered
-addresses. One shared address at login-relay, which reads the user
-from `state`, means adding a user never changes the GitLab
-application. login-relay only redirects; the code is redeemed by
-workspace-admin, which alone holds the PKCE secret.
+addresses (it lets extra query parameters through, so the bounce
+forwards only `code`, `state`, `error` and `error_description`). One
+shared address at login-relay, which reads the user from `state`,
+means adding a user never changes the GitLab application. login-relay
+only redirects; the code is redeemed by workspace-admin, which alone
+holds the PKCE secret.
 
 From a terminal, `workspace-admin connect gitlab` starts the same flow
 over the control socket, prints address 2, and waits for step 17.
@@ -107,8 +109,8 @@ sequenceDiagram
 ```
 
 **Why the storage pass (steps 4 to 7).** SeaweedFS accepts only a
-signed token naming the user. GitLab tokens are opaque, and a refresh
-returns no new ID token, so login-relay checks the GitLab token live
+signed token naming the user. GitLab access tokens are opaque and its
+ID tokens live 2 minutes, so login-relay checks the GitLab token live
 and signs its own short pass. SeaweedFS trusts only login-relay's keys
 (`http://login-relay:8080/.well-known/jwks.json`).
 
@@ -130,7 +132,7 @@ If connecting fails:
 | Action | Effect | Status |
 | :--- | :--- | :--- |
 | Operator removes user1 from `WORKSPACE_USERS` | Step 7 refuses | `s3_auth_failed`; git push still uses the token until GitLab blocks it |
-| GitLab admin blocks user1, or user1 revokes `workspace-backup` | Step 1 fails | `login_expired` |
+| GitLab admin blocks user1, or user1 revokes `workspace-backup` | Step 1 fails (for a block, GitLab 19.5.1 answers 500 once, then `invalid_grant`) | `login_unreachable` once, then `login_expired` |
 | Connection older than `CONNECTION_MAX_AGE_DAYS` (180) | Admin stops using it | `login_expired`; page offers Reconnect |
 | user1 clicks Disconnect | Token revoked and deleted | `not_connected` |
 | SeaweedFS down | Step 8 fails; git assets continue | `s3_unreachable` |
