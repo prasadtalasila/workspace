@@ -122,8 +122,9 @@ class BrowserUser:  # pylint: disable=too-few-public-methods
         page.goto(f"{BASE}/users/sign_in")
         page.fill("#user_login", self.username)
         page.fill("#user_password", STATE["password"])
-        page.locator("form#new_user button[type=submit], "
-                     "form#new_user input[type=submit]").first.click()
+        page.locator("[data-testid=sign-in-button], form#new_user "
+                     "button[type=submit], form#new_user input[type=submit]"
+                     ).first.click()
         page.wait_for_load_state("networkidle")
         if "/users/sign_in" in page.url:
             raise RuntimeError(f"sign-in failed for {self.username}: {page.url}")

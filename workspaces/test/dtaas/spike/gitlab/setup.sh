@@ -13,9 +13,11 @@ until curl -fsS "${BASE}/users/sign_in" >/dev/null 2>&1; do sleep 10; done
 
 root_token="$(docker compose -f compose.yml exec -T gitlab gitlab-rails runner '
   u = User.find_by_username("root")
-  pat = u.personal_access_tokens.create!(name: "spike", scopes: [:api, :sudo],
-    expires_at: 7.days.from_now)
-  puts pat.token' | tail -1)"
+  attrs = { name: "spike", scopes: [:api, :sudo], expires_at: 7.days.from_now }
+  if PersonalAccessToken.column_names.include?("organization_id")
+    attrs[:organization] = Organizations::Organization.first
+  end
+  puts u.personal_access_tokens.create!(attrs).token' | tail -1)"
 
 api() {
   curl -fsS -H "PRIVATE-TOKEN: ${root_token}" "$@"
