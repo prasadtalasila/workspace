@@ -61,7 +61,9 @@ Keycloak, so both profiles share one path.
   the workspace runs, since every round refreshes); "Offline Session
   Max" 180 days.
 
-Both may rotate the refresh token on every refresh. The admin saves
+Both may rotate the refresh token on every refresh. Keycloak returns
+a new one each time but keeps the old one valid while the realm's
+"Revoke Refresh Token" is off, as it stays (spike S4). The admin saves
 the new one before using the access token, by temp file and rename,
 under a per-provider lock. An ended grant shows as `login_expired`.
 
@@ -101,8 +103,8 @@ every deployment.
 | Aspect | Keycloak | GitLab |
 | :--- | :--- | :--- |
 | Authorize | `<realm>/protocol/openid-connect/auth` (public URL) | `/oauth/authorize` (public URL) |
-| Token, revoke | `/token`, `/revoke` on `http://keycloak:8080` | `/oauth/token`, `/oauth/revoke` on `GITLAB_INTERNAL_URL` |
-| Checking a token | Standard introspection | `/oauth/token/info` + `/oauth/userinfo` (no standard introspection) |
+| Token, revoke | `/token`, `/revoke` on `http://keycloak:8080` (discovery names the public `/revoke`) | `/oauth/token`, `/oauth/revoke` on `GITLAB_INTERNAL_URL` |
+| Checking a token | Standard introspection; login-relay's client must be in the token's `aud` | `/oauth/token/info` + `/oauth/userinfo` (no standard introspection) |
 | Scopes for storage | `openid offline_access` | `openid write_repository` |
 | Access token | Signed JWT, 5 minutes | Opaque, 2 hours |
 | Username | `preferred_username` | `nickname` |

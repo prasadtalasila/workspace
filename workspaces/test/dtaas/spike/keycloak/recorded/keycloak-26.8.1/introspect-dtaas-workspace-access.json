@@ -1,0 +1,51 @@
+{
+  "body": {
+    "acr": "0",
+    "active": true,
+    "allowed-origins": [
+      "http://dtaas.test"
+    ],
+    "aud": [
+      "dtaas-workspace",
+      "account"
+    ],
+    "auth_time": 1792604594,
+    "azp": "dtaas-workspace",
+    "client_id": "dtaas-workspace",
+    "email": "user1@example.org",
+    "email_verified": true,
+    "exp": 1792604894,
+    "family_name": "Spike",
+    "given_name": "user1",
+    "iat": 1792604594,
+    "iss": "http://dtaas.test/auth/realms/dtaas",
+    "jti": "<jti>",
+    "name": "user1 Spike",
+    "preferred_username": "user1",
+    "realm_access": {
+      "roles": [
+        "default-roles-dtaas",
+        "offline_access",
+        "uma_authorization"
+      ]
+    },
+    "resource_access": {
+      "account": {
+        "roles": [
+          "manage-account",
+          "manage-account-links",
+          "view-profile"
+        ]
+      }
+    },
+    "scope": "openid profile email",
+    "sid": "<sid>",
+    "sub": "8f7d7510-18c7-48a9-b85e-034c9510ef52",
+    "token_type": "Bearer",
+    "typ": "Bearer",
+    "username": "user1"
+  },
+  "content_type": "application/json",
+  "request": "POST /auth/realms/dtaas/protocol/openid-connect/token/introspect",
+  "status": 200
+}

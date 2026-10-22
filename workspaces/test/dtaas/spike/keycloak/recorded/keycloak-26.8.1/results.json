@@ -1,0 +1,337 @@
+[
+ {
+  "check": "Keycloak version",
+  "ok": true,
+  "detail": "26.8.1"
+ },
+ {
+  "check": "realm keeps 30-day idle and 180-day offline maximum",
+  "ok": true,
+  "detail": "max 15552000, idle 2592000"
+ },
+ {
+  "check": "workspace-backup: public, consent, PKCE S256",
+  "ok": true,
+  "detail": "optional scopes ['address', 'phone', 'organization', 'offline_access', 'microprofile-jwt']"
+ },
+ {
+  "check": "internal discovery: issuer is the public URL",
+  "ok": true,
+  "detail": "http://dtaas.test/auth/realms/dtaas"
+ },
+ {
+  "check": "internal discovery: authorization_endpoint is public",
+  "ok": true,
+  "detail": "http://dtaas.test/auth/realms/dtaas/protocol/openid-connect/auth"
+ },
+ {
+  "check": "internal discovery: token_endpoint is internal",
+  "ok": true,
+  "detail": "http://keycloak:8080/auth/realms/dtaas/protocol/openid-connect/token"
+ },
+ {
+  "check": "internal discovery: introspection_endpoint is internal",
+  "ok": true,
+  "detail": "http://keycloak:8080/auth/realms/dtaas/protocol/openid-connect/token/introspect"
+ },
+ {
+  "check": "internal discovery: jwks_uri is internal",
+  "ok": true,
+  "detail": "http://keycloak:8080/auth/realms/dtaas/protocol/openid-connect/certs"
+ },
+ {
+  "check": "internal discovery: userinfo_endpoint is internal",
+  "ok": true,
+  "detail": "http://keycloak:8080/auth/realms/dtaas/protocol/openid-connect/userinfo"
+ },
+ {
+  "check": "internal discovery: revocation_endpoint stays public",
+  "ok": true,
+  "detail": "http://dtaas.test/auth/realms/dtaas/protocol/openid-connect/revoke"
+ },
+ {
+  "check": "internal discovery: end_session_endpoint (informational)",
+  "ok": true,
+  "detail": "http://dtaas.test/auth/realms/dtaas/protocol/openid-connect/logout"
+ },
+ {
+  "check": "public discovery: every endpoint public",
+  "ok": true,
+  "detail": "issuer http://dtaas.test/auth/realms/dtaas"
+ },
+ {
+  "check": "advertised PKCE methods",
+  "ok": true,
+  "detail": "['plain', 'S256']"
+ },
+ {
+  "check": "dtaas-workspace has no consent page",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "check": "code from public authorize redeems at the internal URL",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "check": "access token iss is the public issuer",
+  "ok": true,
+  "detail": "http://dtaas.test/auth/realms/dtaas"
+ },
+ {
+  "check": "ID token verifies with internal JWKS, public iss",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "check": "ID token echoes nonce",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "check": "login access token lives 5 minutes",
+  "ok": true,
+  "detail": "expires_in 300"
+ },
+ {
+  "check": "authorize without code_challenge refused",
+  "ok": true,
+  "detail": "invalid_request: Missing parameter: code_challenge_method"
+ },
+ {
+  "check": "code_challenge_method=plain refused",
+  "ok": true,
+  "detail": "invalid_request: Invalid parameter: code challenge method is not matching the configured one"
+ },
+ {
+  "check": "consent page on first workspace-backup authorize",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "check": "redeem without code_verifier refused",
+  "ok": true,
+  "detail": "HTTP 400 invalid_grant: PKCE code verifier not specified"
+ },
+ {
+  "check": "no consent page once granted",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "check": "redeem with wrong code_verifier refused",
+  "ok": true,
+  "detail": "HTTP 400 invalid_grant: PKCE verification failed: Code mismatch"
+ },
+ {
+  "check": "public redeem with verifier, no secret",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "check": "code is single use",
+  "ok": true,
+  "detail": "HTTP 400 invalid_grant: Code not valid"
+ },
+ {
+  "check": "workspace-backup authorize reused the DTaaS SSO session",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "check": "redirect_uri refused: dtaas.test/login-relay/oauth/keycloak/callback/x",
+  "ok": true,
+  "detail": "HTTP 400"
+ },
+ {
+  "check": "redirect_uri refused: dtaas.test/login-relay/oauth/keycloak/callback?next=/x",
+  "ok": true,
+  "detail": "HTTP 400"
+ },
+ {
+  "check": "redirect_uri refused: dtaas.test/login-relay/oauth/keycloak/callback/",
+  "ok": true,
+  "detail": "HTTP 400"
+ },
+ {
+  "check": "redirect_uri refused: evil.test/login-relay/oauth/keycloak/callback",
+  "ok": true,
+  "detail": "HTTP 400"
+ },
+ {
+  "check": "redirect_uri refused: /dtaas.test/login-relay/oauth/keycloak/callback",
+  "ok": true,
+  "detail": "HTTP 400"
+ },
+ {
+  "check": "redeem with another redirect_uri refused",
+  "ok": true,
+  "detail": "HTTP 400 invalid_grant: Incorrect redirect_uri"
+ },
+ {
+  "check": "dtaas-workspace has no consent page",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "check": "code from public authorize redeems at the internal URL",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "check": "access token iss is the public issuer",
+  "ok": true,
+  "detail": "http://dtaas.test/auth/realms/dtaas"
+ },
+ {
+  "check": "ID token verifies with internal JWKS, public iss",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "check": "ID token echoes nonce",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "check": "login access token lives 5 minutes",
+  "ok": true,
+  "detail": "expires_in 300"
+ },
+ {
+  "check": "backup token without dtaas-workspace in aud is inactive",
+  "ok": true,
+  "detail": "aud None"
+ },
+ {
+  "check": "with the audience mapper: dtaas-workspace introspects it",
+  "ok": true,
+  "detail": "client_id workspace-backup, azp workspace-backup, username user1, fields ['acr', 'active', 'allowed-origins', 'aud', 'auth_time', 'azp', 'client_id', 'email', 'email_verified', 'exp', 'family_name', 'given_name', 'iat', 'iss', 'jti', 'name', 'preferred_username', 'realm_access', 'scope', 'sid', 'sub', 'token_type', 'typ', 'username']"
+ },
+ {
+  "check": "introspection of the login token",
+  "ok": true,
+  "detail": "client_id dtaas-workspace, aud ['dtaas-workspace', 'account']"
+ },
+ {
+  "check": "introspection of the offline token (informational)",
+  "ok": true,
+  "detail": "active False, typ None"
+ },
+ {
+  "check": "public client cannot introspect",
+  "ok": true,
+  "detail": "HTTP 403 invalid_request: Client not allowed."
+ },
+ {
+  "check": "introspection with a wrong secret refused",
+  "ok": true,
+  "detail": "HTTP 401 invalid_client: Client authentication failed."
+ },
+ {
+  "check": "unknown token is inactive",
+  "ok": true,
+  "detail": "{\"active\":false}"
+ },
+ {
+  "check": "scope has offline_access",
+  "ok": true,
+  "detail": "openid profile email offline_access"
+ },
+ {
+  "check": "refresh token is an offline token",
+  "ok": true,
+  "detail": "typ Offline, exp 1795196595, refresh_expires_in 2592000"
+ },
+ {
+  "check": "access token names the owner (preferred_username)",
+  "ok": true,
+  "detail": "azp workspace-backup, aud dtaas-workspace"
+ },
+ {
+  "check": "backup access token lives 5 minutes",
+  "ok": true,
+  "detail": "expires_in 300"
+ },
+ {
+  "check": "ID token in code answer",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "check": "public refresh without secret",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "check": "refresh returns a refresh token",
+  "ok": true,
+  "detail": "changed True"
+ },
+ {
+  "check": "ID token on refresh (informational)",
+  "ok": true,
+  "detail": "id_token present True"
+ },
+ {
+  "check": "old refresh token with revokeRefreshToken off (informational)",
+  "ok": true,
+  "detail": "HTTP 200 None: "
+ },
+ {
+  "check": "with revokeRefreshToken on: old refresh token refused",
+  "ok": true,
+  "detail": "HTTP 400 invalid_grant: Maximum allowed refresh token reuse exceeded"
+ },
+ {
+  "check": "with revokeRefreshToken on: newest token after a reuse",
+  "ok": true,
+  "detail": "informational: HTTP 400 invalid_grant: Session doesn't have required client"
+ },
+ {
+  "check": "offline maximum ends a grant in use (20 s probe)",
+  "ok": true,
+  "detail": "HTTP 400 invalid_grant: Token is not active"
+ },
+ {
+  "check": "offline session listed for workspace-backup",
+  "ok": true,
+  "detail": "1 session(s)"
+ },
+ {
+  "check": "offline token exp with 180-day maximum (informational)",
+  "ok": true,
+  "detail": "exp-iat 2592000s, refresh_expires_in 2592000"
+ },
+ {
+  "check": "declining consent returns access_denied",
+  "ok": true,
+  "detail": "access_denied"
+ },
+ {
+  "check": "public revoke of the offline token",
+  "ok": true,
+  "detail": "revoke HTTP 200, refresh HTTP 400 invalid_grant: Offline user session not found"
+ },
+ {
+  "check": "revoke ends the offline session (informational)",
+  "ok": true,
+  "detail": "0 offline session(s) left"
+ },
+ {
+  "check": "disabled user's refresh refused",
+  "ok": true,
+  "detail": "HTTP 400 invalid_grant: User disabled"
+ },
+ {
+  "check": "disabled user's access token inactive (informational)",
+  "ok": true,
+  "detail": "active False"
+ },
+ {
+  "check": "admin revoking the consent ends the offline grant",
+  "ok": true,
+  "detail": "HTTP 400 invalid_grant: Offline user session not found"
+ }
+]

@@ -30,11 +30,13 @@ deployments: SeaweedFS trusts only login-relay in both.
 | Client | Used by | Type | Scopes | Returns to |
 | :--- | :--- | :--- | :--- | :--- |
 | `dtaas-workspace` | login-relay | Confidential | `openid profile` | `https://dtaas.example.org/login-relay/callback` |
-| `workspace-backup` | workspace-admin | Public, PKCE S256, "Consent required" | `openid offline_access` | `https://dtaas.example.org/login-relay/oauth/keycloak/callback` |
+| `workspace-backup` | workspace-admin | Public, PKCE S256, "Consent required", Audience mapper adding `dtaas-workspace` | `openid offline_access` | `https://dtaas.example.org/login-relay/oauth/keycloak/callback` |
 
-Realm settings: "Offline Session Idle" 30 days, "Offline Session Max
-Limited" on with 180 days. Keycloak runs with
-`KC_HOSTNAME=https://dtaas.example.org/auth` and
+The Audience mapper lets login-relay introspect the client's tokens:
+Keycloak answers `active: false` to a client not in a token's `aud`
+(spike S4). Realm settings: "Offline Session Idle" 30 days, "Offline
+Session Max Limited" on with 180 days, "Revoke Refresh Token" off.
+Keycloak runs with `KC_HOSTNAME=https://dtaas.example.org/auth` and
 `KC_HOSTNAME_BACKCHANNEL_DYNAMIC=true`, so browsers use the public URL
 and containers `http://keycloak:8080/auth`.
 
@@ -159,3 +161,6 @@ environment:
   alike.
 - Session checks for `/config` and the nginx front door call
   `http://login-relay:8080/token/introspect`, as in GitLab deployments.
+- Disconnect posts to `OIDC_INTERNAL_URL/protocol/openid-connect/revoke`
+  (`token` and `client_id`): discovery names the public revocation
+  endpoint even with backchannel URLs dynamic (spike S4).

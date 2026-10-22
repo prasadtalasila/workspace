@@ -1,0 +1,55 @@
+# Spike S4 overlay: the test compose's Keycloak behind its Traefik, with
+# KC_HOSTNAME_BACKCHANNEL_DYNAMIC on, and the spike_s4_keycloak.py
+# checks. Not named compose*.yml: it is not valid on its own. Use with
+# --env-file spike/keycloak/spike.env, which sets SERVER_DNS=dtaas.test:
+# the spike container reaches Traefik by that name, as a browser would,
+# and Keycloak directly as http://keycloak:8080/auth, as login-relay and
+# workspace-admin will. Traefik publishes no host port here.
+#
+# Usage, from workspaces/test/dtaas:
+#   s4="docker compose -p spike-keycloak -f compose.traefik.secure.yml \
+#     -f spike/keycloak/spike.overlay.yml --env-file config/.env \
+#     --env-file spike/keycloak/spike.env"
+#   $s4 up -d --wait keycloak traefik
+#   $s4 run --rm --build spike-keycloak   # 67 checks
+#   $s4 down -v
+# SPIKE_KEYCLOAK_VERSION=26.8.1 tries another release. The fixed network
+# names dtaas-frontend and dtaas-users mean no dtaas stack may run
+# alongside. Answers, tokens redacted, land in the spike-keycloak-out
+# volume under recorded/; the run changes realm settings briefly (a
+# 20-second offline maximum, "Revoke Refresh Token" on) and sets them
+# back.
+
+services:
+  traefik:
+    ports: !reset []
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:${SPIKE_KEYCLOAK_VERSION:-26.7.4}
+    environment:
+      - KC_HOSTNAME_BACKCHANNEL_DYNAMIC=true
+
+  spike-keycloak:
+    build:
+      context: ./spike/keycloak
+    environment:
+      KEYCLOAK_PUBLIC_URL: http://${SERVER_DNS}/auth
+      KEYCLOAK_INTERNAL_URL: http://keycloak:8080/auth
+      KEYCLOAK_REALM: ${KEYCLOAK_REALM:-dtaas}
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      SPIKE_USER_PASSWORD: ${SPIKE_USER_PASSWORD:-Spike-s4-Passw0rd-x7}
+      DTAAS_URL: http://${SERVER_DNS}
+    volumes:
+      - spike-keycloak-out:/spike-out
+    networks:
+      - frontend
+      - users
+    depends_on:
+      keycloak:
+        condition: service_healthy
+      traefik:
+        condition: service_started
+
+volumes:
+  spike-keycloak-out:

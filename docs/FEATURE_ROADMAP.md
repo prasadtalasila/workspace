@@ -83,7 +83,7 @@ PR 8 and PR 9 can be built in parallel. PR 12 comes last.
 | S1 SeaweedFS | Versioning, lifecycle on versioned buckets, STS with login-relay as issuer, prefix policy and denies; pin latest stable `>= 4.40` | Done: 4.48; role ARN, signing key, 1-hour sessions and a lifecycle runner differ from the design ([findings](tasks/102-s3-backup.md#s1-seaweedfs)) |
 | S2 rclone | `--s3-version-at`, SeaweedFS provider, session tokens, `--skip-links`, `--s3-no-check-bucket`; pin latest stable | Done: v1.75.2; the deletion brake needs `--delete-before` ([findings](tasks/102-s3-backup.md#s2-rclone)) |
 | S3 GitLab | PKCE for public applications, exact redirect URIs, `/oauth/token/info` and `/oauth/userinfo` fields, refresh rotation, no ID token on refresh, 2-hour access tokens | In part: Oathkeeper's `.Subject` and `.Extra` confirmed; the GitLab checks are scripted but not run, as GitLab 19.5 needs a 4 GB container ([findings](tasks/102-s3-backup.md#s3-gitlab-in-part)) |
-| S4 Keycloak | `KC_HOSTNAME_BACKCHANNEL_DYNAMIC`, offline access with consent, 180-day offline maximum, introspection of `workspace-backup` tokens by login-relay | Open |
+| S4 Keycloak | `KC_HOSTNAME_BACKCHANNEL_DYNAMIC`, offline access with consent, 180-day offline maximum, introspection of `workspace-backup` tokens by login-relay | Done: 26.8.1; introspection needs an audience mapper, the revocation endpoint stays public ([findings](tasks/102-s3-backup.md#s4-keycloak)) |
 
 ## Principles
 

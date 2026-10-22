@@ -101,6 +101,8 @@ Oathkeeper caches the answer for 30 seconds. GitLab has no standard
 introspection endpoint, so login-relay asks the two questions GitLab
 answers and replies in RFC 7662 form; with Keycloak it forwards to
 Keycloak's introspection endpoint and applies the same checks.
+Keycloak introspects only tokens whose `aud` names login-relay's
+client, so both its clients carry an Audience mapper for it (spike S4).
 
 | Situation | Result |
 | :--- | :--- |
@@ -188,7 +190,9 @@ Oathkeeper's `.Subject` is `sub`, not `username`. `.Extra` holds
 is `.Extra.groups`); `exp` and `token_type` do not reach it (spike
 S3). The `/authz/workspace/<user>` check therefore reads
 `extra.username`, as it does today, and `X-User-Subject` carries the
-provider's user id.
+provider's user id. With Keycloak, backup tokens also name login-relay's
+client in `aud`, so the client check uses `client_id`, never `aud`
+(spike S4).
 
 **Exchange** (RFC 8693 shape):
 

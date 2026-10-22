@@ -1,0 +1,6 @@
+{
+  "body": "",
+  "content_type": "",
+  "request": "POST /auth/realms/dtaas/protocol/openid-connect/revoke",
+  "status": 200
+}

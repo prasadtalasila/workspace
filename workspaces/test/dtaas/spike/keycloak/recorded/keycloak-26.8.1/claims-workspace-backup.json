@@ -1,0 +1,46 @@
+{
+  "body": {
+    "access": {
+      "acr": "0",
+      "allowed-origins": [
+        "http://dtaas.test"
+      ],
+      "aud": "dtaas-workspace",
+      "auth_time": 1792604594,
+      "azp": "workspace-backup",
+      "email": "user1@example.org",
+      "email_verified": true,
+      "exp": 1792604895,
+      "family_name": "Spike",
+      "given_name": "user1",
+      "iat": 1792604595,
+      "iss": "http://dtaas.test/auth/realms/dtaas",
+      "jti": "<jti>",
+      "name": "user1 Spike",
+      "preferred_username": "user1",
+      "realm_access": {
+        "roles": [
+          "offline_access"
+        ]
+      },
+      "scope": "openid profile email offline_access",
+      "sid": "<sid>",
+      "sub": "8f7d7510-18c7-48a9-b85e-034c9510ef52",
+      "typ": "Bearer"
+    },
+    "refresh": {
+      "aud": "http://dtaas.test/auth/realms/dtaas",
+      "aud_x": "dtaas-workspace",
+      "azp": "workspace-backup",
+      "exp": 1795196595,
+      "iat": 1792604595,
+      "iss": "http://dtaas.test/auth/realms/dtaas",
+      "jti": "<jti>",
+      "prov": "default",
+      "scope": "openid profile web-origins roles acr email offline_access basic",
+      "sid": "<sid>",
+      "sub": "8f7d7510-18c7-48a9-b85e-034c9510ef52",
+      "typ": "Offline"
+    }
+  }
+}

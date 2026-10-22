@@ -183,7 +183,7 @@ for the same reason.
 | Bounce callback or per-user redirect URIs | Bounce |
 | Grant maximum | 180 days |
 | Version retention | Configurable, default 365 days |
-| Versions of SeaweedFS, rclone, Keycloak, GitLab | Latest stable, pinned by the spike: SeaweedFS 4.48 (S1), rclone v1.75.2 (S2); Keycloak and GitLab by S3 and S4 |
+| Versions of SeaweedFS, rclone, Keycloak, GitLab | Latest stable, pinned by the spike: SeaweedFS 4.48 (S1), rclone v1.75.2 (S2), Keycloak 26.8.1 (S4); GitLab by S3 |
 
 The build order is in the [feature roadmap](../../FEATURE_ROADMAP.md):
 login-relay work is F3, F4 and F9.
