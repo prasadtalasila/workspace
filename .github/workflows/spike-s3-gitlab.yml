@@ -1,0 +1,67 @@
+# Temporary: runs spike S3's GitLab checks on a hosted runner, which has
+# the memory GitLab needs. Lives only on the spike-s3-gitlab-run branch.
+name: Spike S3 GitLab
+
+on:
+  push:
+    branches: [spike-s3-gitlab-run]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  gitlab:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: workspaces/test/dtaas/spike/gitlab
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+
+      - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
+        with:
+          python-version: '3.12'
+
+      - name: Install probe dependencies
+        run: |
+          pip install requests pyjwt cryptography playwright==1.64.0
+          python -m playwright install --with-deps chromium
+
+      - name: Start GitLab
+        run: docker compose -f compose.yml up -d gitlab
+
+      - name: Seed GitLab
+        run: timeout 1500 ./setup.sh
+
+      - name: Run probe
+        run: |
+          set -o pipefail
+          python3 -I probe.py 2>&1 | tee probe.out
+
+      - name: Oathkeeper check
+        if: always()
+        run: ./oathkeeper_check.sh 2>&1 | tee oathkeeper.out
+
+      - name: Collect logs
+        if: always()
+        run: |
+          free -m > host.txt
+          docker stats --no-stream >> host.txt || true
+          docker compose -f compose.yml logs --tail 400 gitlab > gitlab.log 2>&1 || true
+          docker compose -f compose.yml exec -T gitlab gitlab-rake gitlab:env:info > env.txt 2>&1 || true
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+        with:
+          name: spike-s3-gitlab
+          path: |
+            workspaces/test/dtaas/spike/gitlab/probe.out
+            workspaces/test/dtaas/spike/gitlab/oathkeeper.out
+            workspaces/test/dtaas/spike/gitlab/host.txt
+            workspaces/test/dtaas/spike/gitlab/env.txt
+            workspaces/test/dtaas/spike/gitlab/gitlab.log
+            workspaces/test/dtaas/spike/gitlab/recorded/
+          if-no-files-found: warn
